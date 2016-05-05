@@ -26,16 +26,20 @@ module JbossApp
     end
     def action_create
       env
-      template "#{new_resource.installation_dir}server/#{new_resource.name}"do
-        source new_resource.app_template
-        user new_resource.owner
-        group new_resource.group
-        variables :context => new_resource.custom_config
+      #template "#{new_resource.installation_dir}server/#{new_resource.name}"do
+      #  source new_resource.app_template
+      #  user new_resource.owner
+      #  group new_resource.group
+      #  variables :context => new_resource.custom_config
+      #end
+      directory"#{new_resource.installation_dir}server/#{new_resource.name}"do
+        recursive true
       end
     end
     def action_destroy
-      template "#{new_resource.installation_dir}/server/#{new_resource.name}"do
+      directory "#{new_resource.installation_dir}/server/#{new_resource.name}"do
         action :delete
+        recursive true
       end
     end
   end
