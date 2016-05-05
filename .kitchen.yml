@@ -29,5 +29,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[jboss::default]
+      - recipe[poise-jboss::default]
     attributes:
