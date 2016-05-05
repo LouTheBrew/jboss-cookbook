@@ -1,4 +1,4 @@
-name 'jboss'
+name 'poise-jboss'
 maintainer 'Luis Felipe Moura Pereira De Siqueira'
 maintainer_email 'LouTheBrew@gmail.com'
 license 'MIT'
