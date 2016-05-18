@@ -7,6 +7,7 @@ module JbossApp
     provides :jboss_app
     actions :create
     attribute :name, name_attribute: true, kind_of: String
+    attribute :jboss_version, default: '4.2.3.GA'
     attribute :installation_dir, default: '/opt/jboss/', kind_of: String
     attribute :owner, default: 'jboss', kind_of: String
     attribute :group, default: 'jboss', kind_of: String
@@ -25,13 +26,6 @@ module JbossApp
       end
     end
     def action_create
-      env
-      #template "#{new_resource.installation_dir}server/#{new_resource.name}"do
-      #  source new_resource.app_template
-      #  user new_resource.owner
-      #  group new_resource.group
-      #  variables :context => new_resource.custom_config
-      #end
       directory"#{new_resource.installation_dir}server/#{new_resource.name}"do
         recursive true
       end
