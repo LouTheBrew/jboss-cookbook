@@ -1,6 +1,7 @@
 require 'poise'
 require 'chef/resource'
 require 'chef/provider'
+
 module JbossApp
   class Resource < Chef::Resource
     include Poise
@@ -17,24 +18,30 @@ module JbossApp
   class Provider < Chef::Provider
     include Poise
     provides :jboss_app
-    def env
-      jboss_env new_resource.name do
-        jboss_destination new_resource.installation_dir
-        user new_resource.owner
-        group new_resource.group
-        not_if do ::File.exists?(new_resource.installation_dir) end
+    def destroy(appdir)
+      directory "#{new_resource.installation_dir}server/#{new_resource.name}" do
+        recursive true
+        action :delete
       end
+    end
+    def create(appdir)
+      directory "#{new_resource.installation_dir}server/#{new_resource.name}" do
+        recursive true
+      end
+    end
+    def env
+      #jboss_env new_resource.name do
+      #  jboss_destination new_resource.installation_dir
+      #  user new_resource.owner
+      #  group new_resource.group
+      #  not_if do ::File.exists?(new_resource.installation_dir) end
+      #end
     end
     def action_create
-      directory"#{new_resource.installation_dir}server/#{new_resource.name}"do
-        recursive true
-      end
+      create "#{new_resource.installation_dir}server/#{new_resource.name}"
     end
     def action_destroy
-      directory "#{new_resource.installation_dir}/server/#{new_resource.name}"do
-        action :delete
-        recursive true
-      end
+      destroy "#{new_resource.installation_dir}server/#{new_resource.name}"
     end
   end
 end

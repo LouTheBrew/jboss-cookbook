@@ -1,2 +1,3 @@
 include_recipe 'java'
-jboss_app 'core001'
+jboss_install 'whatever'
+#jboss_app 'core001'
