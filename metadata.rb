@@ -8,4 +8,5 @@ version '0.0.2'
 
 depends 'poise'
 depends 'poise-service'
+depends 'poise-fpm'
 depends 'java'
