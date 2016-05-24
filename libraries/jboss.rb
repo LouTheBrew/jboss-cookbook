@@ -18,8 +18,8 @@ module Jboss
   class Provider < Chef::Provider
     include Poise
     provides :jboss
-    def jboss_url
-      nil
+    def bash
+      'bash'
     end
     def jboss_home
       "#{new_resource.path}#{new_resource.name}"
@@ -54,7 +54,6 @@ module Jboss
       end
     end
     def setup
-      interpreter = 'bash'
       bash "untar jboss #{new_resource.name}" do
         code <<-EOH
         tar zxf #{self.tarball} -C #{self.jboss_source_home}
@@ -63,7 +62,7 @@ module Jboss
       bash "build jboss #{new_resource.name}" do
         cwd ::File.join(self.jboss_source_home, self.untar_name)
         code <<-EOH
-        #{interpreter} build/build.sh
+        #{self.bash} build/build.sh
         mv #{self.source_build_origin_path}/* #{new_resource.path}
         EOH
         # self.source_build_origin_path won't exist if the build.sh did not execute
