@@ -7,7 +7,7 @@ module Jboss
     include Poise
     provides :jboss
     actions :build
-    attribute :name, name_attribute: true, kind_of: String
+    attribute :version, name_attribute: true, kind_of: String
     attribute :user, default: 'root', kind_of: String
     attribute :group, default: 'root', kind_of: String
     attribute :path, default: '/opt/jboss/'
@@ -18,26 +18,23 @@ module Jboss
   class Provider < Chef::Provider
     include Poise
     provides :jboss
-    def bash
-      'bash'
-    end
     def jboss_home
-      "#{new_resource.path}#{new_resource.name}"
+      "#{new_resource.path}#{new_resource.version}"
     end
     def jboss_source_home
       ::File.join(new_resource.path, 'src')
     end
     def jboss_installation_path
-      ::File.join(new_resource.path, new_resource.name)
+      ::File.join(new_resource.path, new_resource.version)
     end
     def untar_name
-      "jboss-#{new_resource.name}-src"
+      "jboss-#{new_resource.version}-src"
     end
     def source_build_origin_path
-      ::File.join(self.jboss_source_home, self.untar_name, 'build', 'output', "jboss-#{new_resource.name}")
+      ::File.join(self.jboss_source_home, self.untar_name, 'build', 'output', "jboss-#{new_resource.version}")
     end
     def tarball
-      ::File.join(Chef::Config[:file_cache_path], "jboss-#{new_resource.name}.tar.gz")
+      ::File.join(Chef::Config[:file_cache_path], "jboss-#{new_resource.version}.tar.gz")
     end
     def common
       [self.jboss_home, self.jboss_source_home, new_resource.path].each do |dir|
@@ -54,16 +51,16 @@ module Jboss
       end
     end
     def setup
-      bash "untar jboss #{new_resource.name}" do
+      bash "untar jboss #{new_resource.version}" do
         code <<-EOH
         tar zxf #{self.tarball} -C #{self.jboss_source_home}
         EOH
       end
-      bash "build jboss #{new_resource.name}" do
+      bash "build jboss #{new_resource.version}" do
         cwd ::File.join(self.jboss_source_home, self.untar_name)
         code <<-EOH
-        #{self.bash} build/build.sh
-        mv #{self.source_build_origin_path}/* #{new_resource.path}
+        /bin/bash build/build.sh
+        mv #{self.source_build_origin_path}/* #{self.jboss_home}
         EOH
         # self.source_build_origin_path won't exist if the build.sh did not execute
         not_if do ::File.exists?(self.source_build_origin_path) end
@@ -72,6 +69,7 @@ module Jboss
         fpm new_resource.package_name do
           sources new_resource.path
         end
+        #return "#{Chef::Config[:file_cache_path]}/#{new_resource.package_name}.rpm"
       end
     end
     def install
