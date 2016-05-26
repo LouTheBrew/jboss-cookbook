@@ -19,7 +19,7 @@ module Jboss
     include Poise
     provides :jboss
     def jboss_home
-      "#{new_resource.path}#{new_resource.version}"
+      ::File.join(new_resource.path, new_resource.version)
     end
     def jboss_source_home
       ::File.join(new_resource.path, 'src')
@@ -69,7 +69,6 @@ module Jboss
         fpm new_resource.package_name do
           sources new_resource.path
         end
-        #return "#{Chef::Config[:file_cache_path]}/#{new_resource.package_name}.rpm"
       end
     end
     def install
